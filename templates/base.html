@@ -1,0 +1,50 @@
+{{ define "base.html" }}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+    <script src="https://kit.fontawesome.com/1779bb385a.js" crossorigin="anonymous"></script>
+    <title>{{ block "title" . }}Base Page{{ end }}</title>
+    {{ template "styles" . }}
+    {{ block "more_styles" . }}{{end}}
+</head>
+
+<body hx-boost="true">
+    {{ template "content" . }}
+    <footer>
+        <nav id="main-nav" aria-label="Main Navigation">
+            <ul>
+                <div class="main-nav-container">
+                    <li><a hx-swap="transition:true" href="/test"><i arria-current="{{if eq .Selected 0}}page{{else}}{{end}}" class="fa-regular fa-calendar-days {{if eq .Selected 0}}selected{{else}}{{end}}"></i></a></li>
+                    <li><a hx-swap="transition:true" href="/"><i arria-current="{{if eq .Selected 1}}page{{else}}{{end}}" class="fa-solid fa-house-chimney {{if eq .Selected 1}}selected{{else}}{{end}}"></i></a></li>
+                    <li><a hx-swap="transition:true" href="/#"><i arria-current="{{if eq .Selected 2}}page{{else}}{{end}}" class="fa-solid fa-hands-holding {{if eq .Selected 2}}selected{{else}}{{end}}"></i></a></li>
+                </div>
+            </ul>
+        </nav>
+    </footer>
+    <script>
+        if (!customElements.get("bottom-nav")) {
+            customElements.define("bottom-nav", class BottomNav extends HTMLElement {
+                constructor() {
+                    super()
+                    this.styles = `
+                    <style>
+                        
+                    </style>
+                    `
+                }
+                static get observedAttributes() {
+                    return []
+                }
+                attributeChangedCallback(name, oldVal, newVal) { }
+                connectedCallback() { }
+            });
+        }
+    
+    </script>
+</body>
+
+</html>
+{{ end }}

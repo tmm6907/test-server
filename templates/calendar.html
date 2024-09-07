@@ -1,0 +1,24 @@
+
+{{define "title"}}Test{{end}}
+{{ define "content" }}
+{{ block "more_styles" . }}
+<style>
+    :root {
+        --bg-color: white;
+        --bg-footer: var(--colorSecondaryDark);
+    }
+    main {
+        
+    }
+    .main-header {
+        background-color: var(--colorSecondary);
+        color: var(--textLight);
+    }
+</style>
+{{end}}
+<main>
+    <header class="main-header" aria-labelledby="calendar-header">
+        <div class="heading-wrapper"><h1 id="calendar-header">CALENDAR PAGE</h1></div>
+    </header>
+</main>
+{{ end }}

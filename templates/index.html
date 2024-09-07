@@ -1,0 +1,26 @@
+
+{{define "title"}}Home{{end}}
+{{ define "content" }}
+{{ block "more_styles" . }}
+<style>
+    :root {
+        --bg-color: hsl(0, 0%, 78%);
+        --bg-footer: var(--colorPrimaryDark);
+    }
+    main {
+        
+    }
+    .main-header {
+        
+        background-color: var(--colorPrimary);
+    }
+    
+</style>
+{{end}}
+<main>
+    <header class="main-header" aria-labelledby="home-header">
+        <div class="heading-wrapper"><h1 id="home-header">HOME PAGE</h1></div>
+    </header>
+    
+</main>
+{{ end }}

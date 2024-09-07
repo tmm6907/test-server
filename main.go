@@ -3,11 +3,30 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"io"
 	"log"
-	"net/http"
+	"log/slog"
+	"path/filepath"
+	"slices"
+	"text/template"
 
+	"github.com/labstack/echo"
 	_ "github.com/mattn/go-sqlite3"
 )
+
+type Template struct {
+	templates map[string]*template.Template
+}
+
+func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	tmpl, ok := t.templates[name]
+	if !ok {
+		err := fmt.Errorf("Template not found '%s'", name)
+		slog.Error(err.Error())
+		return err
+	}
+	return tmpl.ExecuteTemplate(w, "base.html", data)
+}
 
 func initDB() (*sql.DB, error) {
 	// Open a connection to the SQLite database file (or create it if it doesn't exist)
@@ -37,16 +56,58 @@ func initDB() (*sql.DB, error) {
 	return db, nil
 }
 
+func populateTemplates(pattern string) (map[string]*template.Template, error) {
+	templs := make(map[string]*template.Template)
+	files, err := filepath.Glob(pattern)
+	layoutFiles := []string{"templates/base.html", "templates/styles.html"}
+	if err != nil {
+		return templs, nil
+	}
+	mainTemplate, err := template.ParseFiles(layoutFiles...)
+	if err != nil {
+		log.Fatalf("Error parsing main layout: %v", err)
+	}
+	for _, file := range files {
+		if slices.Contains(layoutFiles, file) {
+			continue
+		}
+		fileName := filepath.Base(file)
+
+		clonedTemplate, err := mainTemplate.Clone()
+		if err != nil {
+			log.Fatalf("Error cloning main template: %v", err)
+		}
+		templs[fileName] = template.Must(clonedTemplate.ParseFiles(file))
+		slog.Info(fmt.Sprintf("Successfully parsed template: %s", fileName))
+	}
+	return templs, nil
+}
+
 func main() {
-	mux := http.NewServeMux()
-	db, err := initDB()
+	server := echo.New()
+	templates, err := populateTemplates("templates/*.html")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	h := &Handler{
-		DB: db,
+	t := &Template{
+		templates: templates,
 	}
-	mux.HandleFunc("GET /events", h.GetEvents())
-	log.Println("listening on port 8000")
-	log.Fatalln(http.ListenAndServe(":8000", nil))
+	server.Renderer = t
+	// server.Logger.SetOutput(os.Stdout)
+
+	// // Add middleware to log errors
+	// server.Use(middleware.Logger())
+	// server.Use(middleware.Recover())
+
+	h := &Handler{
+		DB: nil,
+	}
+	server.GET("/", h.Index)
+	server.GET("/events", h.GetEvents)
+	server.GET("/test", h.CalendarPage)
+	log.Println("Registered routes:")
+
+	port := "8000"
+	log.Printf("listening on port %s\n", port)
+	log.Fatal(server.Start(fmt.Sprintf(":%s", port)))
 }

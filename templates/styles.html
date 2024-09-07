@@ -1,0 +1,112 @@
+{{ define "styles" }}
+<style>
+    :root {
+        --colorPrimary: rgb(145, 41, 41);
+        --colorPrimaryDark: hsl(0, 56%, 25%);
+        --colorDark: hsl(0, 0%, 20%);
+        --colorSecondary: hsl(143, 53%, 29%);
+        --colorSecondaryDark: hsl(143, 53%, 20%);
+        --textDark: hsl(0, 0%, 10%);
+        --textLight: hsl(0, 0%, 90%);
+        --bg-color: white;
+        --fs-body: 1rem;
+
+        --bg-footer: var(--colorDark);
+    }
+    ::view-transition-old(#main-nav li){
+       transition: background-color ease-out 300ms;
+    }
+
+    ::view-transition-new(#main-nav li){
+        transition: background-color ease-in 300ms;
+    }
+
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-size: var(--fs-body);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    body,
+    html {
+        box-sizing: border-box;
+        font-size: 1rem;
+        font-family: 'Courier New', Courier, monospace;
+        color: var(--textDark);
+    }
+    body{
+        display: grid;
+        background-color: var(--bg-color);
+        transition: background-color ease-out 300ms;
+        grid-template-columns: auto;
+        grid-template-rows: auto min-content;
+
+        .main-header {
+            /* grid-column: 2 / 3; */
+            padding: 2em;
+        }
+        footer {
+            
+            /* grid-column: 1 / -1; */
+            /* margin-top: auto; */
+            padding: 1.5em;
+            /* grid-row: 2 / -1; */
+        }
+    }
+    footer {
+        background-color: var(--bg-footer);
+        border-radius: 1.5em 1.5em 0 0;
+    }
+    a {
+        width: fit-content;
+        height: auto;
+        border-radius: 0.25em;
+    }
+    a:active{
+        background-color: rgba(179, 179, 179, 0.3);
+    }
+
+    #main-nav {
+        color: var(--textLight);
+    }
+
+    #main-nav li {
+        list-style: none;
+        padding-block: 0.5em;
+        a {
+            color: inherit;
+            font-size: 1.5rem;
+            padding: 0.5em 1em;
+        }
+        /* a::before{
+            content: "";
+            width: 100%;
+            height: 100%;
+        } */
+    }
+
+    .selected {
+        a {
+            box-shadow: 0 0 5em black;;
+        }
+    }
+    .main-nav-container{
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1em;
+        margin-inline: auto;
+        place-items: center;
+    }
+    .heading-wrapper {
+        /* width: fit-content; */
+    }
+</style>
+{{ end }}
